@@ -1,0 +1,30 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: effective-mobile-backend
+    expose:
+      - "8080"
+    networks:
+      - app-network
+    security_opt:
+      - no-new-privileges:true
+
+  nginx:
+    build:
+      context: ./nginx
+    container_name: effective-mobile-nginx
+    ports:
+      - "${NGINX_HOST_PORT:-80}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  app-network:
+    name: effective-mobile-network
+    driver: bridge
